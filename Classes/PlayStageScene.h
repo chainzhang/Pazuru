@@ -7,6 +7,12 @@
 
 USING_NS_CC;
 
+namespace GameNode {
+    enum GameNode{
+        GAMENODE_MASK
+    };
+}
+
 
 class PlayStage : public Layer
 {
@@ -33,6 +39,8 @@ private:
     std::vector<int>_actived_balls;
     Point _last_touch;
     
+    Size _screenSize;
+    
     Label *scoreLabel;
     int score;
     int current_score;
@@ -48,6 +56,11 @@ private:
     bool _user_contorl_end;
     bool _pazuru_done;
     bool _do_pazuru;
+    
+    
+    void boomAnime(Point position, Node *parent);
+    void countAnime(Point position, Node *parent);
+    void countAnimeBoom(Point position, Node *parent);
     
     int _times;
     
@@ -69,6 +82,10 @@ private:
     void enableTouch();
     void disableTouch();
     void checkMoveDown();
+    
+    
+    
+    void showAttackCount();
     
     void checkIndex(int index);
     

@@ -19,6 +19,6 @@ BallSprite* BallSprite::create(int row, int col)
     ball->m_imgIndex = arc4random()%TOTAL_BLOCK_NUM;
     
     ball->initWithSpriteFrameName(ballImageName[ball->m_imgIndex]);
-    
+    ball->autorelease();
     return ball;
 }
