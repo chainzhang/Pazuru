@@ -56,11 +56,14 @@ private:
     bool _user_contorl_end;
     bool _pazuru_done;
     bool _do_pazuru;
+
+	ClippingNode *ballSheetArea;
+	Layer *ballSheetMask;
     
     
-    void boomAnime(Point position, Node *parent);
-    void countAnime(Point position, Node *parent);
-    void countAnimeBoom(Point position, Node *parent);
+    void boomAnime(Point position);
+    void countAnime(Point position);
+    void countAnimeBoom(Point position);
     
     int _times;
     

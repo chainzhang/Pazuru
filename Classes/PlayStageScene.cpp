@@ -84,6 +84,13 @@ bool PlayStage::init()
     scoreLabel->setScale(0.8f);
     scoreLabel->setAnchorPoint(Point::ANCHOR_MIDDLE_LEFT);
     scoreLabel->setPosition(Point(20+PointLabel->getContentSize().width*.8, screenSize.height-20));
+
+
+	ballSheetArea = ClippingNode::create();
+	ballSheetArea->setStencil(LayerColor::create(Color4B(0, 0, 0, 255), _screenSize.width, 240.0f));
+	ballSheetArea->setAlphaThreshold(255);
+	ballSheetArea->setInverted(false);
+
     
     this->addChild(scoreLabel);
     
@@ -93,6 +100,7 @@ bool PlayStage::init()
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("texture_pazuru.plist", "texture_pazuru.pvr.ccz");
     
     ballSheet = Sprite::create();
+	ballSheet->retain();
     _eventDispatcher->addEventListenerWithSceneGraphPriority(_listener, ballSheet);
     
     this->addChild(ballSheet,2);
@@ -168,6 +176,8 @@ void PlayStage::initTouchEvent()
 void PlayStage::initBallStage(bool actived)
 {
     //if (_game_state != GAME_STATE_NORMAL || _game_state != GAME_STATE_PAUSE) return;
+	
+
     for (int r = 0; r < m_height; r++)
     {
         for (int c = 0; c < m_width; c++)
@@ -214,7 +224,7 @@ void PlayStage::createAndDropBall(int row, int col, bool actived)
      */
     
     ball->runAction(drop);
-    
+
     ballSheet->addChild(ball,3);
     
     m_matrix[row * m_width + col] = ball;
@@ -281,13 +291,16 @@ void PlayStage::DeleteBall(std::vector<int>&balls, bool star_anime)
             balls.pop_back();
             continue;
         }
-        m_matrix[balls.back()]->runAction(EaseBackInOut::create(ScaleTo::create(.3f, 0)));
+		m_matrix[balls.back()]->runAction(Sequence::create(EaseBackInOut::create(ScaleTo::create(.3f, 0)),
+														   CallFunc::create(CC_CALLBACK_0(Sprite::removeFromParentAndCleanup, m_matrix[balls.back()], true)),
+			NULL));
         
         if (star_anime){
-            this->runAction(Sequence::create(DelayTime::create(0.16f),
-                                             CallFunc::create(CC_CALLBACK_0(PlayStage::boomAnime, this, m_matrix[balls.back()]->getPosition(), m_matrix[balls.back()])),
-                                            NULL));
+            ballSheet->runAction(Sequence::create(DelayTime::create(0.16f),
+											 CallFunc::create(CC_CALLBACK_0(PlayStage::boomAnime, this, m_matrix[balls.back()]->getPosition())),
+                                             NULL));
         }
+
         m_matrix[balls.back()] = 0;
         points += bounce;
         
@@ -546,40 +559,41 @@ int PlayStage::ActionIsRunning()
 void PlayStage::showAttackCount()
 {
     _game_state = GAME_STATE_PAUSE;
-    
     if (chains > 1) {
     
-    auto mask = LayerColor::create(Color4B(0,0,0,255), _screenSize.width, 240.0f);
+		ballSheetMask = LayerColor::create(Color4B(0, 0, 0, 255), _screenSize.width, 240.0f);
+		ballSheetMask->setAnchorPoint(Point::ANCHOR_MIDDLE);
+		ballSheetMask->setOpacity(0);
     
-    mask->setAnchorPoint(Point::ANCHOR_MIDDLE);
-    mask->setOpacity(0);
-    mask->runAction(Sequence::create(FadeTo::create(0.4f,160.0f),
+    ballSheetMask->runAction(Sequence::create(FadeTo::create(0.4f,160.0f),
                                      DelayTime::create(2.0f),
                                      FadeOut::create(0.3f),
                                      CallFunc::create(CC_CALLBACK_0(PlayStage::initBallStage, this, false)),
+									 CallFunc::create(CC_CALLBACK_0(Layer::removeAllChildrenWithCleanup, ballSheetMask, true)),
+									 CallFunc::create(CC_CALLBACK_0(Layer::removeFromParentAndCleanup, ballSheetMask, true)),
                                      NULL));
-    mask->runAction(Sequence::create(DelayTime::create(0.2f),
-                                     CallFunc::create(CC_CALLBACK_0(PlayStage::countAnime, this, Point(_screenSize.width/2, mask->getContentSize().height/2), mask)),
+	ballSheetMask->runAction(Sequence::create(DelayTime::create(0.2f),
+                                     CallFunc::create(CC_CALLBACK_0(PlayStage::countAnime, this, Point(_screenSize.width/2, ballSheetMask->getContentSize().height/2))),
                                      DelayTime::create(1.1f),
-                                     CallFunc::create(CC_CALLBACK_0(PlayStage::countAnimeBoom, this, Point(_screenSize.width/2, mask->getContentSize().height/2), mask)),
+                                     CallFunc::create(CC_CALLBACK_0(PlayStage::countAnimeBoom, this, Point(_screenSize.width/2, ballSheetMask->getContentSize().height/2))),
                                      NULL));
     
-    ballSheet->addChild(mask, 400, GameNode::GAMENODE_MASK);
+    ballSheet->addChild(ballSheetMask, 400, GameNode::GAMENODE_MASK);
+	
     } else {
         this->initBallStage();
     }
 }
 
 
-void PlayStage::countAnime(Point position, Node *parent)
+void PlayStage::countAnime(Point position)
 {
-    auto clipMask = ClippingNode::create();
-    auto mask = LayerColor::create(Color4B(0,0,0,255), parent->getContentSize().width, parent->getContentSize().height);
-    //auto anime_sprite = Sprite::create();
     
-    clipMask->setStencil(mask);
-    clipMask->setAlphaThreshold(255);
-    clipMask->setInverted(false);
+    //auto anime_sprite = Sprite::create();
+	auto mask = ClippingNode::create();
+	mask->setStencil(LayerColor::create(Color4B(0, 0, 0, 255), _screenSize.width, 240.0f));
+	mask->setAlphaThreshold(255);
+	mask->setInverted(false);
     
     auto count_anime = ParticleSystemQuad::create("Count_anime.plist");
     count_anime->setAutoRemoveOnFinish(true);
@@ -587,43 +601,42 @@ void PlayStage::countAnime(Point position, Node *parent)
     
     //anime_sprite->addChild(count_anime);
     
-    clipMask->addChild(count_anime);
-    parent->addChild(clipMask);
+	mask->addChild(count_anime);
+	ballSheetMask->addChild(mask, 500);
 }
 
-void PlayStage::countAnimeBoom(Point position, Node *parent)
+void PlayStage::countAnimeBoom(Point position)
 {
-    auto clipMask = ClippingNode::create();
-    auto mask = LayerColor::create(Color4B(0,0,0,255), parent->getContentSize().width, parent->getContentSize().height);
-    //auto anime_sprite = Sprite::create();
-    
-    clipMask->setStencil(mask);
-    clipMask->setAlphaThreshold(255);
-    clipMask->setInverted(false);
-    
-    auto count_anime = ParticleSystemQuad::create("count_boom_ver2.plist");
-    count_anime->setAutoRemoveOnFinish(true);
-    count_anime->setPosition(position);
-    count_anime->setLifeVar(0.2f);
+	auto mask = ClippingNode::create();
+	mask->setStencil(LayerColor::create(Color4B(0, 0, 0, 255), _screenSize.width, 240.0f));
+	mask->setAlphaThreshold(255);
+	mask->setInverted(false);
+
+    auto count_boom_anime = ParticleSystemQuad::create("count_boom_ver2.plist");
+	count_boom_anime->setAutoRemoveOnFinish(true);
+	count_boom_anime->setPosition(position);
+	count_boom_anime->setLifeVar(0.2f);
     
     auto chainLabel = Label::createWithBMFont("ui_font.fnt", std::to_string(chains) + " Chains!!");
     chainLabel->setScale(0);
     chainLabel->runAction(Sequence::create(EaseBackIn::create(ScaleTo::create(0.4f, 2.0f)),
                                            EaseBackOut::create(ScaleTo::create(0.18f, 1.0f)),
                                            DelayTime::create(0.4f),
-                                           FadeOut::create(0.3f),NULL));
+                                           FadeOut::create(0.3f),
+										   CallFunc::create(CC_CALLBACK_0(Label::removeFromParentAndCleanup, chainLabel, true)),
+										   NULL));
     chainLabel->setPosition(position);
     
     //anime_sprite->addChild(count_anime);
     
-    clipMask->addChild(count_anime);
-    parent->addChild(clipMask);
-    parent->addChild(chainLabel);
+	mask->addChild(count_boom_anime);
+	mask->addChild(chainLabel);
+	ballSheetMask->addChild(mask, 500);
 }
 
 
 
-void PlayStage::boomAnime(Point position, Node *parent)
+void PlayStage::boomAnime(Point position)
 {
     auto particleStars = ParticleSystemQuad::create("star_boom_ver18.plist");
     particleStars->setAutoRemoveOnFinish(true);
@@ -633,7 +646,6 @@ void PlayStage::boomAnime(Point position, Node *parent)
     particleStars->setSpeed(400.0f + chains*20.0f);
     particleStars->setPosition(position);
     ballSheet->addChild(particleStars, 300);
-
 }
 
 void PlayStage::update(float delta){

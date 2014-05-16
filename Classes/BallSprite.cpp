@@ -16,9 +16,9 @@ BallSprite* BallSprite::create(int row, int col)
     ball->selected = false;
     ball->m_row = row;
     ball->m_col = col;
-    ball->m_imgIndex = arc4random()%TOTAL_BLOCK_NUM;
+    ball->m_imgIndex = rand()%TOTAL_BLOCK_NUM;
     
     ball->initWithSpriteFrameName(ballImageName[ball->m_imgIndex]);
-    ball->autorelease();
+	ball->autorelease();
     return ball;
 }
