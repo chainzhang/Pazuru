@@ -22,6 +22,8 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
+		375CA1B51929D931006B1128 /* BeeLogoScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 375CA1B31929D931006B1128 /* BeeLogoScreen.cpp */; };
+		375CA1B91929E27B006B1128 /* EntryPointScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 375CA1B71929E27B006B1128 /* EntryPointScene.cpp */; };
 		376D4749192228FC003EB41E /* hd in Resources */ = {isa = PBXBuildFile; fileRef = 376D4747192228FC003EB41E /* hd */; };
 		376D474A192228FC003EB41E /* sd in Resources */ = {isa = PBXBuildFile; fileRef = 376D4748192228FC003EB41E /* sd */; };
 		377856AA1922104600671224 /* BallSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377856A71922104500671224 /* BallSprite.cpp */; };
@@ -222,6 +224,11 @@
 		1D6058910D05DD3D006BFB54 /* pazuru iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pazuru iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		375CA1B31929D931006B1128 /* BeeLogoScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BeeLogoScreen.cpp; path = ../Classes/BeeTools/BeeLogoScreen.cpp; sourceTree = "<group>"; };
+		375CA1B41929D931006B1128 /* BeeLogoScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BeeLogoScreen.h; path = ../Classes/BeeTools/BeeLogoScreen.h; sourceTree = "<group>"; };
+		375CA1B61929DA75006B1128 /* BeeTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BeeTools.h; path = ../Classes/BeeTools/BeeTools.h; sourceTree = "<group>"; };
+		375CA1B71929E27B006B1128 /* EntryPointScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntryPointScene.cpp; path = ../Classes/EntryPointScene.cpp; sourceTree = "<group>"; };
+		375CA1B81929E27B006B1128 /* EntryPointScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntryPointScene.h; path = ../Classes/EntryPointScene.h; sourceTree = "<group>"; };
 		376D4747192228FC003EB41E /* hd */ = {isa = PBXFileReference; lastKnownFileType = folder; path = hd; sourceTree = "<group>"; };
 		376D4748192228FC003EB41E /* sd */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sd; sourceTree = "<group>"; };
 		377856A71922104500671224 /* BallSprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BallSprite.cpp; path = ../Classes/BallSprite.cpp; sourceTree = "<group>"; };
@@ -335,6 +342,7 @@
 		15AA9C4015B7EC450033D6C2 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				375CA1AD1929D859006B1128 /* BeeTools */,
 				377856A71922104500671224 /* BallSprite.cpp */,
 				377856A81922104600671224 /* BallSprite.h */,
 				377856A91922104600671224 /* Config.h */,
@@ -342,6 +350,8 @@
 				1AFAF8B416D35DE700DB1158 /* AppDelegate.h */,
 				1AFAF8B516D35DE700DB1158 /* PlayStageScene.cpp */,
 				1AFAF8B616D35DE700DB1158 /* PlayStageScene.h */,
+				375CA1B71929E27B006B1128 /* EntryPointScene.cpp */,
+				375CA1B81929E27B006B1128 /* EntryPointScene.h */,
 			);
 			name = Classes;
 			path = ../classes;
@@ -407,6 +417,16 @@
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		375CA1AD1929D859006B1128 /* BeeTools */ = {
+			isa = PBXGroup;
+			children = (
+				375CA1B31929D931006B1128 /* BeeLogoScreen.cpp */,
+				375CA1B41929D931006B1128 /* BeeLogoScreen.h */,
+				375CA1B61929DA75006B1128 /* BeeTools.h */,
+			);
+			name = BeeTools;
 			sourceTree = "<group>";
 		};
 		503AE0F517EB97AB00D1A890 /* Icons */ = {
@@ -665,7 +685,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
+				375CA1B51929D931006B1128 /* BeeLogoScreen.cpp in Sources */,
 				377856AA1922104600671224 /* BallSprite.cpp in Sources */,
+				375CA1B91929E27B006B1128 /* EntryPointScene.cpp in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
 				1AFAF8B716D35DE700DB1158 /* AppDelegate.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,

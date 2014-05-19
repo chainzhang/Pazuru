@@ -5,7 +5,7 @@ _game_state(GAME_STATE_NORMAL),
 _ball_filled(true),
 _ball_removed(false),
 _user_contorl_end(false),
-_animation_running(true),
+_animation_running(false),
 _ball_movedown_end(true),
 _pazuru_done(false),
 _do_pazuru(false),
@@ -45,7 +45,6 @@ Scene* PlayStage::createScene()
     
     // レイヤーをシーンに貼付けます。
     scene->addChild(layer);
-    
     // シーンを返します。
     return scene;
 }
@@ -53,7 +52,7 @@ Scene* PlayStage::createScene()
 // on "init" you need to initialize your instance
 bool PlayStage::init()
 {
-    
+    CCLOG("Called");
     if ( !Layer::init() )
     {
         return false;
@@ -169,6 +168,7 @@ void PlayStage::initTouchEvent()
         bounce = 2;
         chains = 0;
         this->DeleteBall(BallToDeleteByUser);
+        _user_contorl_end = true;
         
     };
 }
@@ -188,6 +188,7 @@ void PlayStage::initBallStage(bool actived)
     }
     if (!actived) {
         _game_state = GAME_STATE_NORMAL;
+        _user_contorl_end = false;
         this->runAction(Sequence::create(DelayTime::create(0.1f),
                                          CallFunc::create(CC_CALLBACK_0(PlayStage::enableTouch, this)), NULL));
     }
@@ -279,6 +280,8 @@ void PlayStage::disableTouch()
 
 void PlayStage::DeleteBall(std::vector<int>&balls, bool star_anime)
 {
+    if (balls.empty()) return;
+    
     while (m_matrix[balls.back()] == 0){
         balls.pop_back();
     }
@@ -650,10 +653,9 @@ void PlayStage::boomAnime(Point position)
 
 void PlayStage::update(float delta){
     
-    if (_game_state == GAME_STATE_PAUSE) return;
+    if (_game_state == GAME_STATE_PAUSE || !_user_contorl_end) return;
     
     _animation_running = this->ActionIsRunning();
-    CCLOG("user_control : %f", delta);
     
     if (!_animation_running)
     {
