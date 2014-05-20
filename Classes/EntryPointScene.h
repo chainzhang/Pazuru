@@ -11,21 +11,22 @@
 
 #include "BeeTools/BeeLogoScreen.h"
 
+class PlayStage;
+
 USING_NS_CC;
 
 class EntryPoint : public Layer
 {
 public:
-    EntryPoint();
-    ~EntryPoint();
     
     static Scene * createScene();
     virtual bool init();
-    virtual void onEnter();
     virtual void onExit();
-    virtual void onEnterTransitionDidFinish();
     
     CREATE_FUNC(EntryPoint);
+    
+private:
+    Scene* _scene;
 };
 
 

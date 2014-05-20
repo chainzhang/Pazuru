@@ -13,17 +13,28 @@ USING_NS_CC;
 
 float LogoScreen::delay = 0.0f;
 
-LogoScreen::LogoScreen(Node *parent)
+LogoScreen::LogoScreen()
 {
-    m_parent = parent;
 }
 
 LogoScreen::~LogoScreen()
 {
-    //this->parent->release();
+    this->removeAllChildrenWithCleanup(true);
 }
 
-void LogoScreen::create(std::string filename, float duration)
+LogoScreen* LogoScreen::create()
+{
+    static LogoScreen* instance = new LogoScreen();
+    if (instance && instance->init())
+    {
+        instance->autorelease();
+        return instance;
+    }
+    CC_SAFE_DELETE(instance);
+    return NULL;
+}
+
+void LogoScreen::add(std::string filename, float duration)
 {
     Size screenSize = Director::getInstance()->getVisibleSize();
     
@@ -31,8 +42,6 @@ void LogoScreen::create(std::string filename, float duration)
     screen->setAnchorPoint(Point::ANCHOR_MIDDLE);
     screen->setPosition(screenSize.width/2,screenSize.height/2);
     screen->setOpacity(0);
-    screen->retain();
-    m_parent->addChild(screen);
     
     screens.push_back(screen);
     screen_durations.push_back(duration);
@@ -56,9 +65,9 @@ void LogoScreen::play(CallFunc *callback)
             actions.pushBack(callback);
         
         screens.back()->runAction(Sequence::create(actions));
+        this->addChild(screens.back());
         
-        delay+= screen_durations.back();
-        
+        delay+= screen_durations.back()+2.0f;
         
         screens.pop_back();
         screen_durations.pop_back();

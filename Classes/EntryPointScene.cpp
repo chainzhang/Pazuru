@@ -10,15 +10,6 @@
 #include "PlayStageScene.h"
 #include "BeeTools/BeeLogoScreen.h"
 
-EntryPoint::EntryPoint()
-{
-    
-}
-
-EntryPoint::~EntryPoint()
-{
-    
-}
 
 Scene * EntryPoint::createScene()
 {
@@ -36,31 +27,21 @@ bool EntryPoint::init()
     }
     
     auto scene = PlayStage::createScene();
+    scene->retain();
     
-    
-    Bee::LogoScreen *logoScreen = new Bee::LogoScreen();
-    this->addChild(logoScreen->create("background.png", 2.0f));
-    logoScreen->play(CallFunc::create(CC_CALLBACK_0(Director::replaceScene, Director::getInstance(),scene)));
+    Bee::LogoScreen *logoScreen = Bee::LogoScreen::create();
+    logoScreen->add("background.png", 2.0f);
+    logoScreen->add("background.png", 1.0f);
+    logoScreen->play(CallFunc::create(CC_CALLBACK_0(Director::replaceScene, Director::getInstance(), scene)));
+    this->addChild(logoScreen);
     
     //Sprite *background = Sprite::create("background.png");
     //this->addChild(background);
-    
     
     return true;
 }
 
 void EntryPoint::onExit()
 {
-    
-}
-
-void EntryPoint::onEnterTransitionDidFinish()
-{
-    
-}
-
-void EntryPoint::onEnter()
-{
-    //auto scene = PlayStage::createScene();
-    //Director::getInstance()->replaceScene(scene);
+    Layer::onExit();
 }
