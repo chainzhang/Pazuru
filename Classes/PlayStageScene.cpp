@@ -139,7 +139,8 @@ void PlayStage::initTouchEvent()
          }
          */
         
-        if (_animation_running || !_actived_balls.empty() || _game_state != GAME_STATE_NORMAL){
+        if (_animation_running || !_actived_balls.empty() || _game_state != GAME_STATE_NORMAL)
+        {
             return false;
         }
         
@@ -164,6 +165,9 @@ void PlayStage::initTouchEvent()
     
     _listener->onTouchEnded = [=](Touch *touch, Event *event){
         
+        if (num_selected == 0) return;
+        
+        CCLOG("touch end");
         this->disableTouch();
         bounce = 2;
         chains = 0;
